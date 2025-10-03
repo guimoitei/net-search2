@@ -1,0 +1,79 @@
+*{
+
+ padding: 5px;
+ margin: 5px;
+ font-family: Arial;
+ 
+
+}
+
+body {
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-image: url("https://i.pinimg.com/736x/c7/ae/48/c7ae484918a2bebd85f7296ff2943def.jpg");
+
+}
+
+.BarraR{
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent;
+    padding: 2px;
+    margin: 2px;
+    border-radius: 20px;
+    color: white;
+
+}
+
+.Pesquisa{
+    
+ padding: 8px;
+ margin: 8px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background-color: transparent;
+
+}
+
+.BtnP{
+
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+
+}
+
+.BarraPP{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    width: 800px;
+    height: 50px;
+    border-radius: 50px;
+
+}
+
+.BarraP{
+
+    background-color: transparent;
+    border: none;
+    width: 600px;
+
+}
+
+.Resultados{
+
+    height: 100%;
+    width: 100%;
+    background-color: white;
+
+}

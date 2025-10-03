@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <title>Net Search</title>
+        <link rel="stylesheet" href="net search.css">
+
+
+    </head>
+
+    <body>
+
+        <div class="BarraR">
+
+            <img src="https://sdmntprwestus3.oaiusercontent.com/files/1c782debb4190d7_00000000-c4d4-61fd-a1f3-4c7fb0c560dc/drvs/wm/raw?se=2025-10-03T21%3A40%3A26Z&sp=r&sv=2024-08-04&sr=b&scid=84743fe3-a922-53f5-a683-4a220b98209f&skoid=5c72dd08-68ae-4091-b4e1-40ccec0693ae&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-10-03T20%3A14%3A53Z&ske=2025-10-04T20%3A14%3A53Z&sks=b&skv=2024-08-04&sig=jhqn7SOifAvOWGjixiXoWLq7CgHw6tfwyt013uk2muU%3D"
+            style="width: 250px; height: 150px; cursor: pointer;"
+            >
+
+            <img id="imagemBotao" src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c302119c50c554b20c6e9b/fa88bedc1_logo.png"
+            style="width: 100px; height: 100px;">
+
+        </div>
+
+        <div class="ContainerPai">
+
+                <div class="Pesquisa">
+
+                
+                    <div class="BarraPP">
+                    
+                        
+                        <input class="BarraP" id="pesquisa" placeholder="Pesquisar">    
+                        <button id="buscar" class="BtnP"> Pesquisar</button>
+
+                    </div>
+
+                </div>
+
+        </div>
+
+        <div class="Renata AI">
+            
+            <iframe class="Renata" id="modalIframe" src="https://renata-ai.base44.app" style="display:none; position:fixed; top:0; right:0; width:400px; height:100%; 
+            border:none; z-index:1000;"></iframe>
+            <button id="fechar" style="display:none; position:fixed; top:10px; right:10px; z-index:2000;">X</button>
+
+        </div>
+
+        <div id="resultados" class="Resultados"></div>
+
+         </div>
+
+    </body>
+
+    <script>
+        const imagem = document.getElementById('imagemBotao');
+        const iframe = document.getElementById('modalIframe');
+        const fechar = document.getElementById('fechar');
+
+        // Inicialmente escondidos
+        iframe.style.display = 'none';
+        fechar.style.display = 'none';
+
+        // Mostrar iframe ao clicar na imagem
+        imagem.addEventListener('click', () => {
+        iframe.style.display = 'block';
+        fechar.style.display = 'block';
+        });
+
+        // Fechar iframe ao clicar no botão
+        fechar.addEventListener('click', () => {
+        iframe.style.display = 'none';
+        fechar.style.display = 'none';
+    });
+    
+    </script>
+
+    <script>
+  const API_KEY = "AIzaSyAnhLtAgW75yT-lhQU69kgqm_nVbezQrjI";
+    const CX = "45200b429ccc243c9";
+
+    const input = document.getElementById('pesquisa');
+    const botao = document.getElementById('buscar');
+    const resultados = document.getElementById('resultados');
+
+    function buscarTermo(termo) {
+      if (!termo) return;
+      resultados.innerHTML = 'Carregando...';
+
+      // Atualiza a URL (sem recarregar a página)
+      history.pushState(null, '', `?q=${encodeURIComponent(termo)}`);
+
+      const url = `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${CX}&q=${encodeURIComponent(termo)}&num=10`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          resultados.innerHTML = '';
+          if (!data.items || data.items.length === 0) {
+            resultados.innerHTML = 'Nenhum resultado encontrado';
+            return;
+          }
+
+          data.items.forEach(item => {
+            const div = document.createElement('div');
+            div.classList.add('resultado-item');
+
+            const a = document.createElement('a');
+            a.href = item.link;
+            a.target = '_blank';
+            a.textContent = item.title;
+
+            const snippet = document.createElement('div');
+            snippet.classList.add('resultado-snippet');
+            snippet.textContent = item.snippet || '';
+
+            div.appendChild(a);
+            div.appendChild(snippet);
+            resultados.appendChild(div);
+          });
+        })
+        .catch(err => {
+          resultados.innerHTML = '❌ Erro ao buscar';
+          console.error(err);
+        });
+    }
+
+    // Botão
+    botao.addEventListener('click', () => buscarTermo(input.value.trim()));
+
+    // Enter no input
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') buscarTermo(input.value.trim());
+    });
+
+    // Carrega pesquisa automática pela URL (?q=)
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q');
+      if (q) {
+        input.value = q;
+        buscarTermo(q);
+      }
+    });
+    </script>
+
+</html>
