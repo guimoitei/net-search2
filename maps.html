@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Net Maps</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    * {
+      font-family: Arial, sans-serif;
+      margin: 2px;
+      padding: 2px;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    #painel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      background: #f0f0f0;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    input, select, button {
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #map {
+      flex: 1;
+      height: 700px;
+      width: 100%;
+    }
+
+    .rodape {
+      text-align: center;
+      padding: 10px;
+      background: #f0f0f0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Net Maps</h2>
+
+  <div id="painel">
+    <input type="text" id="origem" placeholder="Origem (ex: São Paulo)">
+    <input type="text" id="destino" placeholder="Destino (ex: Rio de Janeiro)">
+    <select id="modo">
+      <option value="driving-car">🚗 Carro</option>
+      <option value="cycling-regular">🚴 Bicicleta</option>
+      <option value="foot-walking">🚶 A pé</option>
+    </select>
+    <button onclick="tracarRota()">Traçar rota</button>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="rodape">
+    <footer style="color: black;">© 2025 Net Corporation. Todos os Direitos Reservados</footer>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // 🔑 Substitua pela sua API Key gratuita do OpenRouteService
+    const ORS_API_KEY = "5b3ce3597851110001cf6248e07ead0e70ae4f5bb7f7e88b3e0a2df5";
+
+    // Inicializa o mapa no Rio de Janeiro
+    const map = L.map('map').setView([-22.9068, -43.1729], 13);
+
+    // Camada base (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Marcador inicial
+    L.marker([-22.9068, -43.1729])
+      .addTo(map)
+      .bindPopup('Aqui é o Rio de Janeiro!')
+      .openPopup();
+
+    let rotaLayer;
+
+    // Função para converter endereço → coordenadas
+    async function getCoordenadas(endereco) {
+      const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`);
+      const data = await resp.json();
+      if (data.length > 0) {
+        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      } else {
+        alert("Endereço não encontrado: " + endereco);
+        return null;
+      }
+    }
+
+    // Função principal de rota
+    async function tracarRota() {
+      const origemTexto = document.getElementById('origem').value;
+      const destinoTexto = document.getElementById('destino').value;
+      const modo = document.getElementById('modo').value;
+
+      const origem = await getCoordenadas(origemTexto);
+      const destino = await getCoordenadas(destinoTexto);
+
+      if (!origem || !destino) return;
+
+      const rotaURL = `https://api.openrouteservice.org/v2/directions/${modo}?api_key=${ORS_API_KEY}&start=${origem[1]},${origem[0]}&end=${destino[1]},${destino[0]}`;
+
+      const resposta = await fetch(rotaURL);
+      const dados = await resposta.json();
+
+      const coords = dados.features[0].geometry.coordinates.map(c => [c[1], c[0]]);
+
+      // Remove rota anterior, se existir
+      if (rotaLayer) map.removeLayer(rotaLayer);
+
+      // Adiciona nova rota
+      rotaLayer = L.polyline(coords, { color: 'blue', weight: 5 }).addTo(map);
+
+      // Adiciona marcadores de origem e destino
+      L.marker(origem).addTo(map).bindPopup("Origem").openPopup();
+      L.marker(destino).addTo(map).bindPopup("Destino");
+
+      // Centraliza o mapa na rota
+      map.fitBounds(rotaLayer.getBounds());
+    }
+  </script>
+</body>
+</html>

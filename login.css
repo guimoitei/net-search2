@@ -1,0 +1,51 @@
+*{
+
+ font-family: Arial;
+ margin: 8px;
+ padding: 8px;
+
+}
+
+body{
+
+background-color: rgba(255, 203, 212, 0.888);
+
+}
+
+.ContainerPai{
+
+  display: flex;
+  flex-direction: column;   /* coloca os itens em pé */
+  justify-content: center;  /* centraliza verticalmente */
+  align-items: center;      /* centraliza horizontalmente */
+  height: 90vh;         /* ocupa toda a altura da tela */
+  text-align: center;       /* centraliza textos dentro */
+  background-color: white;
+  border-radius: 50px;
+
+}
+
+.ButaoEntrar{
+
+background-color: blue;
+color: white;
+width: 500px;
+border: none;
+border-radius: 50px;
+cursor: pointer;
+
+}
+
+.Email{
+
+    width: 200px;
+    border-radius: 50px;
+
+}
+
+.Senha{
+
+    width: 200px;
+    border-radius: 50px;
+
+}
